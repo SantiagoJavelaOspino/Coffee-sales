@@ -22,7 +22,8 @@ export const purchaseService = {
   // Abrir y descargar el Voucher PDF en una pestaña nueva pasando el token de autenticación
   downloadVoucher: (compraId) => {
     const token = localStorage.getItem('don_beto_token');
-    const url = `/api/compras/${compraId}/voucher?token=${encodeURIComponent(token || '')}`;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+    const url = `${baseUrl}/compras/${compraId}/voucher?token=${encodeURIComponent(token || '')}`;
     window.open(url, '_blank');
   }
 };

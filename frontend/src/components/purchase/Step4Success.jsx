@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatCOP, formatKilos } from '../../utils/currencyFormatter';
 import purchaseService from '../../services/purchaseService';
+import { CheckCircle, Download, Home } from 'lucide-react';
 
 const Step4Success = ({ completedPurchase }) => {
   const navigate = useNavigate();
