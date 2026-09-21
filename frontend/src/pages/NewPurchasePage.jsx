@@ -152,7 +152,7 @@ const NewPurchasePage = () => {
 
         {/* Paso 4: Éxito */}
         {currentStep === 4 && (
-          <Step4Success completedPurchase={completedPurchase} />
+          <Step4Success completedPurchase={completedPurchase} fallbackData={purchaseData} />
         )}
       </div>
     </>

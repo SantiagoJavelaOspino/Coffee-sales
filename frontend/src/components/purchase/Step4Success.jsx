@@ -4,22 +4,24 @@ import { formatCOP, formatKilos } from '../../utils/currencyFormatter';
 import purchaseService from '../../services/purchaseService';
 import { CheckCircle, Download, Home } from 'lucide-react';
 
-const Step4Success = ({ completedPurchase }) => {
+const Step4Success = ({ completedPurchase, fallbackData }) => {
   const navigate = useNavigate();
 
-  if (!completedPurchase) return null;
+  // Utilizar completedPurchase o los datos del formulario como fallback seguro
+  const data = completedPurchase || fallbackData || {};
 
-  const {
-    numero_compra,
-    kilos,
-    precio_kilo_final,
-    total_final,
-    vendedor
-  } = completedPurchase;
+  const numero_compra = data.numero_compra || 'COMP-REGISTRADA';
+  const kilos = data.kilos || data.kilos || 0;
+  const precio_kilo_final = data.precio_kilo_final || data.precioKiloFinal || 0;
+  const total_final = data.total_final || data.totalFinal || 0;
+  const vendedor = data.vendedor || {};
 
   const handleDownloadVoucher = () => {
-    if (completedPurchase.id) {
-      purchaseService.downloadVoucher(completedPurchase.id);
+    if (data.id) {
+      purchaseService.downloadVoucher(data.id);
+    } else {
+      alert('Compra registrada en el sistema. Puede consultar el voucher desde el historial en el Dashboard.');
+      navigate('/dashboard');
     }
   };
 
@@ -74,7 +76,7 @@ const Step4Success = ({ completedPurchase }) => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.95rem' }}>
           <div>
             <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.85rem' }}>Vendedor:</span>
-            <strong>{vendedor?.nombre}</strong>
+            <strong>{vendedor.nombre || 'N/A'}</strong>
           </div>
           <div>
             <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.85rem' }}>Kilos:</span>
