@@ -91,7 +91,7 @@ const generateVoucherPDF = (compra, res) => {
     .moveDown(0.8);
 
   // --------------------------------------------------
-  // DATOS DEL COMPRADOR (Don Beto / Usuario)
+  // DATOS DEL COMPRADOR (Eberto Rodriguez Diaz - Don Beto)
   // --------------------------------------------------
   doc
     .fillColor('#5C3A21')
@@ -104,8 +104,8 @@ const generateVoucherPDF = (compra, res) => {
     .fillColor('#1F2937')
     .fontSize(9.5)
     .font('Helvetica')
-    .text(`Nombre: ${compra.comprador_nombre || 'Don Beto'}`)
-    .text(`Cédula: ${compra.comprador_cedula || 'N/A'}`)
+    .text(`Nombre: ${compra.comprador_nombre || 'Eberto Rodriguez Diaz'}`)
+    .text(`Cédula: ${compra.comprador_cedula || '83232744'}`)
     .moveDown(0.8);
 
   // --------------------------------------------------

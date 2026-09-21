@@ -5,28 +5,22 @@
 
 USE cafe_don_beto_db;
 
--- Limpiar tablas si es necesario (descomentar solo en pruebas)
--- SET FOREIGN_KEY_CHECKS = 0;
--- TRUNCATE TABLE vouchers;
--- TRUNCATE TABLE compras;
--- TRUNCATE TABLE vendedores;
--- TRUNCATE TABLE usuarios;
--- SET FOREIGN_KEY_CHECKS = 1;
-
 -- ------------------------------------------------------------
--- Usuario Comprador Principal: Don Beto
--- Cédula: 123456789
+-- Usuario Comprador Principal: Eberto Rodriguez Diaz (Don Beto)
+-- Cédula: 83232744
 -- Contraseña por defecto: admin123
--- Hash bcrypt de "admin123": $2b$10$g7E1uR/O./4814d45K50c.h9r8E1fW0g0.4K0H.7e5u8R9N0K2c2S
+-- Hash bcrypt verificado de "admin123": $2a$10$sDcD5ReyHY0z5U2Xc.ehd.GaT5Q4nChtftBknubF.jlHTiasD8bJq
 -- ------------------------------------------------------------
 INSERT INTO usuarios (cedula, nombre, password, estado)
 VALUES (
-    '123456789',
-    'Don Beto',
-    '$2b$10$g7E1uR/O./4814d45K50c.h9r8E1fW0g0.4K0H.7e5u8R9N0K2c2S',
+    '83232744',
+    'Eberto Rodriguez Diaz',
+    '$2a$10$sDcD5ReyHY0z5U2Xc.ehd.GaT5Q4nChtftBknubF.jlHTiasD8bJq',
     1
 )
-ON DUPLICATE KEY UPDATE nombre = VALUES(nombre);
+ON DUPLICATE KEY UPDATE 
+    nombre = VALUES(nombre),
+    password = VALUES(password);
 
 -- ------------------------------------------------------------
 -- Vendedor de prueba inicial

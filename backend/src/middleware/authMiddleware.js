@@ -4,19 +4,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_cafe_don_beto_202
 
 const authMiddleware = (req, res, next) => {
   try {
+    let token = null;
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        error: 'Acceso no autorizado. Debe iniciar sesión.'
-      });
+    // 1. Extraer token del encabezado Authorization: Bearer <token>
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
     }
-
-    const token = authHeader.split(' ')[1];
+    // 2. Extraer token del parámetro de consulta URL (?token=...) para descargas directas en navegador (Vouchers)
+    else if (req.query && req.query.token) {
+      token = req.query.token;
+    }
 
     if (!token) {
       return res.status(401).json({
-        error: 'Token de autenticación no proporcionado.'
+        error: 'Acceso no autorizado. Debe iniciar sesión.'
       });
     }
 

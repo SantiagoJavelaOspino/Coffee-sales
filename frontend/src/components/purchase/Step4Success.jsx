@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatCOP, formatKilos } from '../../utils/currencyFormatter';
-import { CheckCircle, Download, Home, FileCheck } from 'lucide-react';
+import purchaseService from '../../services/purchaseService';
 
 const Step4Success = ({ completedPurchase }) => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const Step4Success = ({ completedPurchase }) => {
 
   const handleDownloadVoucher = () => {
     if (completedPurchase.id) {
-      window.open(`/api/compras/${completedPurchase.id}/voucher`, '_blank');
+      purchaseService.downloadVoucher(completedPurchase.id);
     }
   };
 

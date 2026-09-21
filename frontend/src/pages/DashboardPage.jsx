@@ -37,7 +37,7 @@ const DashboardPage = () => {
   }, []);
 
   const handleDownloadVoucher = (compraId) => {
-    window.open(`/api/compras/${compraId}/voucher`, '_blank');
+    purchaseService.downloadVoucher(compraId);
   };
 
   return (
