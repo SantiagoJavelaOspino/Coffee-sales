@@ -11,6 +11,15 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Rutas principales de la API
+const authRoutes = require('./routes/authRoutes');
+const vendorRoutes = require('./routes/vendorRoutes');
+const purchaseRoutes = require('./routes/purchaseRoutes');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/vendedores', vendorRoutes);
+app.use('/api/compras', purchaseRoutes);
+
 // Ruta de comprobación de salud de la API
 app.get('/api/health', (req, res) => {
   res.status(200).json({
