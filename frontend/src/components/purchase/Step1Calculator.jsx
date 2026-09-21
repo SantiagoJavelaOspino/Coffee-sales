@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatCOP, formatKilos } from '../../utils/currencyFormatter';
-import { Calculator, ArrowRight, AlertCircle } from 'lucide-react';
+import { Calculator, ArrowRight, AlertCircle, Home } from 'lucide-react';
 
 const Step1Calculator = ({ purchaseData, updatePurchaseData, onNext }) => {
+  const navigate = useNavigate();
   const [kilos, setKilos] = useState(purchaseData.kilos ? purchaseData.kilos.toString() : '');
   const [valorCarga, setValorCarga] = useState(
     purchaseData.valorCargaInicial ? purchaseData.valorCargaInicial.toString() : ''
@@ -115,7 +117,7 @@ const Step1Calculator = ({ purchaseData, updatePurchaseData, onNext }) => {
       )}
 
       <form onSubmit={handleContinue}>
-        {/* Campo 1: Cantidad de Kilos (NO altera el valor de la carga al escribir) */}
+        {/* Campo 1: Cantidad de Kilos */}
         <div className="form-group">
           <label className="form-label" htmlFor="kilos">
             1. Cantidad de Kilos de Café:
@@ -213,14 +215,26 @@ const Step1Calculator = ({ purchaseData, updatePurchaseData, onNext }) => {
           </div>
         )}
 
-        <button
-          type="submit"
-          className="btn btn-primary"
-          style={{ height: '52px', fontSize: '1.1rem', fontWeight: 700, marginTop: '1rem' }}
-        >
-          <span>CONTINUAR</span>
-          <ArrowRight size={20} />
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard')}
+            className="btn btn-secondary"
+            style={{ height: '52px', flex: '1' }}
+          >
+            <Home size={20} />
+            <span>VOLVER AL INICIO</span>
+          </button>
+
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ height: '52px', flex: '2', fontSize: '1.1rem', fontWeight: 700 }}
+          >
+            <span>CONTINUAR</span>
+            <ArrowRight size={20} />
+          </button>
+        </div>
       </form>
     </div>
   );

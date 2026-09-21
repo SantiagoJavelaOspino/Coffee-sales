@@ -251,9 +251,50 @@ const downloadVoucher = async (req, res, next) => {
   }
 };
 
+// Eliminar una compra por ID (DELETE /api/compras/:id)
+const deletePurchase = async (req, res, next) => {
+  let connection;
+  try {
+    const { id } = req.params;
+
+    connection = await pool.getConnection();
+    await connection.beginTransaction();
+
+    const [compras] = await connection.execute('SELECT id, numero_compra FROM compras WHERE id = ?', [id]);
+    if (!compras || compras.length === 0) {
+      return res.status(404).json({ error: 'Compra no encontrada.' });
+    }
+
+    const numero_compra = compras[0].numero_compra;
+
+    // 1. Eliminar vouchers asociados
+    await connection.execute('DELETE FROM vouchers WHERE compra_id = ?', [id]);
+
+    // 2. Eliminar registro de la compra
+    await connection.execute('DELETE FROM compras WHERE id = ?', [id]);
+
+    await connection.commit();
+
+    return res.status(200).json({
+      message: `La compra ${numero_compra} ha sido eliminada correctamente.`
+    });
+  } catch (error) {
+    if (connection) {
+      await connection.rollback();
+    }
+    next(error);
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+};
+
 module.exports = {
   createPurchase,
   getPurchases,
   getPurchaseById,
-  downloadVoucher
+  downloadVoucher,
+  deletePurchase
 };
+

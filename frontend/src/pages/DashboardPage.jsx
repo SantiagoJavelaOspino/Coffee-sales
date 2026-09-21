@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/common/Navbar';
 import purchaseService from '../services/purchaseService';
 import { formatCOP, formatKilos } from '../utils/currencyFormatter';
-import { ShoppingBag, History, PlusCircle, ArrowRight, Download, Eye, X, Coffee, Calendar, User } from 'lucide-react';
+import { ShoppingBag, History, PlusCircle, ArrowRight, Download, Eye, X, Coffee, Calendar, User, Trash2, AlertTriangle } from 'lucide-react';
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -14,6 +14,11 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedCompra, setSelectedCompra] = useState(null);
+
+  // Estados para eliminación de compra
+  const [compraToDelete, setCompraToDelete] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [deleteError, setDeleteError] = useState('');
 
   // Cargar historial de compras
   const fetchPurchases = async () => {
@@ -38,6 +43,25 @@ const DashboardPage = () => {
 
   const handleDownloadVoucher = (compraId) => {
     purchaseService.downloadVoucher(compraId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!compraToDelete) return;
+    setDeletingId(compraToDelete.id);
+    setDeleteError('');
+    try {
+      await purchaseService.deletePurchase(compraToDelete.id);
+      setCompras((prev) => prev.filter((c) => c.id !== compraToDelete.id));
+      if (selectedCompra && selectedCompra.id === compraToDelete.id) {
+        setSelectedCompra(null);
+      }
+      setCompraToDelete(null);
+    } catch (err) {
+      const msg = err.response?.data?.error || err.message || 'Error al intentar eliminar la compra.';
+      setDeleteError(msg);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -210,6 +234,27 @@ const DashboardPage = () => {
                             <Download size={14} />
                             <span>Voucher</span>
                           </button>
+
+                          <button
+                            onClick={() => setCompraToDelete(c)}
+                            style={{
+                              background: '#FEE2E2',
+                              border: '1px solid #FCA5A5',
+                              color: '#991B1B',
+                              padding: '0.35rem 0.6rem',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.2rem',
+                              fontSize: '0.8rem',
+                              fontWeight: 600
+                            }}
+                            title="Eliminar compra"
+                          >
+                            <Trash2 size={14} />
+                            <span>Borrar</span>
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -271,9 +316,110 @@ const DashboardPage = () => {
               <button
                 onClick={() => handleDownloadVoucher(selectedCompra.id)}
                 className="btn btn-amber"
+                style={{ flex: 1 }}
               >
                 <Download size={18} />
                 <span>Descargar Voucher PDF</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const comp = selectedCompra;
+                  setSelectedCompra(null);
+                  setCompraToDelete(comp);
+                }}
+                style={{
+                  backgroundColor: '#DC2626',
+                  color: '#FFF',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '0.6rem 1rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem'
+                }}
+              >
+                <Trash2 size={16} />
+                <span>Borrar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {compraToDelete && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          zIndex: 1100
+        }}>
+          <div className="card" style={{ maxWidth: '440px', width: '100%', textAlign: 'center', padding: '2rem 1.5rem' }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              backgroundColor: '#FEE2E2',
+              color: '#DC2626',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem auto'
+            }}>
+              <AlertTriangle size={32} />
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1F2937', marginBottom: '0.5rem' }}>
+              ¿Eliminar la compra {compraToDelete.numero_compra}?
+            </h3>
+
+            <p style={{ color: '#6B7280', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+              Esta acción eliminará permanentemente el registro de <strong>{compraToDelete.vendedor_nombre}</strong> ({formatCOP(compraToDelete.total_final)}) de la base de datos.
+            </p>
+
+            {deleteError && (
+              <div className="alert alert-danger" style={{ marginBottom: '1rem', fontSize: '0.85rem' }}>
+                {deleteError}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button
+                type="button"
+                onClick={() => { setCompraToDelete(null); setDeleteError(''); }}
+                className="btn btn-secondary"
+                disabled={!!deletingId}
+                style={{ flex: 1 }}
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={!!deletingId}
+                style={{
+                  flex: 1,
+                  backgroundColor: '#DC2626',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  padding: '0.75rem'
+                }}
+              >
+                {deletingId ? 'Eliminando...' : 'Sí, eliminar'}
               </button>
             </div>
           </div>

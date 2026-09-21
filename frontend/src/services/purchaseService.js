@@ -19,6 +19,12 @@ export const purchaseService = {
     return response.data;
   },
 
+  // Eliminar una compra por ID
+  deletePurchase: async (id) => {
+    const response = await api.delete(`/compras/${id}`);
+    return response.data;
+  },
+
   // Abrir y descargar el Voucher PDF en una pestaña nueva pasando el token de autenticación
   downloadVoucher: (compraId) => {
     const token = localStorage.getItem('don_beto_token');

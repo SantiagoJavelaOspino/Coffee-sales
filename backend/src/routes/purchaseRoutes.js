@@ -18,4 +18,7 @@ router.get('/:id', purchaseController.getPurchaseById);
 // GET /api/compras/:id/voucher
 router.get('/:id/voucher', purchaseController.downloadVoucher);
 
+// DELETE /api/compras/:id
+router.delete('/:id', purchaseController.deletePurchase);
+
 module.exports = router;
