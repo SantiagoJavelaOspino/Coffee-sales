@@ -11,14 +11,15 @@ const Step4Success = ({ completedPurchase, fallbackData }) => {
   const data = completedPurchase || fallbackData || {};
 
   const numero_compra = data.numero_compra || 'COMP-REGISTRADA';
-  const kilos = data.kilos || data.kilos || 0;
-  const precio_kilo_final = data.precio_kilo_final || data.precioKiloFinal || 0;
-  const total_final = data.total_final || data.totalFinal || 0;
-  const vendedor = data.vendedor || {};
+  const kilos = data.kilos !== undefined ? data.kilos : (fallbackData?.kilos || 0);
+  const precio_kilo_final = data.precio_kilo_final || data.precioKiloFinal || fallbackData?.precioKiloFinal || 0;
+  const total_final = data.total_final || data.totalFinal || fallbackData?.totalFinal || 0;
+  const vendedor = data.vendedor || fallbackData?.vendedor || {};
 
   const handleDownloadVoucher = () => {
-    if (data.id) {
-      purchaseService.downloadVoucher(data.id);
+    const compraId = data.id || data.compra_id;
+    if (compraId) {
+      purchaseService.downloadVoucher(compraId);
     } else {
       alert('Compra registrada en el sistema. Puede consultar el voucher desde el historial en el Dashboard.');
       navigate('/dashboard');
@@ -61,7 +62,7 @@ const Step4Success = ({ completedPurchase, fallbackData }) => {
       }}>
         <div style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           alignItems: 'center',
           borderBottom: '1px solid var(--border-light)',
           paddingBottom: '0.75rem',

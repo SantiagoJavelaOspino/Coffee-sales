@@ -33,13 +33,13 @@ const Step3Summary = ({ purchaseData, onFinish, onBack }) => {
 
       const response = await purchaseService.createPurchase(payload);
 
-      if (response && response.compra) {
-        onFinish(response.compra);
+      if (response && (response.compra || response.id)) {
+        onFinish(response.compra || response);
       } else {
-        setError('No fue posible guardar la compra.');
+        setError('No fue posible guardar la compra. Respuesta del servidor incompleta.');
       }
     } catch (err) {
-      const msg = err.response?.data?.error || 'No fue posible guardar la compra. Verifique los datos e intente nuevamente.';
+      const msg = err.message || err.response?.data?.error || 'No fue posible guardar la compra. Verifique los datos e intente nuevamente.';
       setError(msg);
     } finally {
       setSubmitting(false);
@@ -156,7 +156,7 @@ const Step3Summary = ({ purchaseData, onFinish, onBack }) => {
 
           <div style={{
             display: 'flex',
-            justify: 'space-between',
+            justifyContent: 'space-between',
             alignItems: 'center',
             marginTop: '0.75rem',
             paddingTop: '0.75rem',

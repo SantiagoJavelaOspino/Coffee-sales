@@ -23,9 +23,15 @@ api.interceptors.request.use(
   }
 );
 
-// Interceptor para manejar respuestas y errores globales (ej: 401 Unauthorized)
+// Interceptor para manejar respuestas y errores globales
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Si el servidor respondió con HTML en lugar de JSON (p.ej. redirección 200 de Vercel a index.html)
+    if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+      return Promise.reject(new Error('Respuesta inesperada del servidor API (HTML en lugar de JSON).'));
+    }
+    return response;
+  },
   (error) => {
     if (error.response && error.response.status === 401) {
       // Limpiar token vencido o inválido
